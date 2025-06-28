@@ -1,0 +1,66 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "lib": [
+            "ES2023",
+            "ESNext",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "noEmit": true,
+        "strict": true,
+        "noFallthroughCasesInSwitch": true,
+        "skipLibCheck": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "allowImportingTsExtensions": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "isolatedModules": true,
+        "outDir": "dist",
+        "allowUnusedLabels": false,
+        "removeComments": false,
+        "resolveJsonModule": true,
+        "useDefineForClassFields": true,
+        "noErrorTruncation": true,
+        "paths": {
+            "@static/*": ["./static/*"],
+            "@common/*": [
+                "./types/foundry/common/*"
+            ],
+            "@client/*": [
+                "./types/foundry/client/*"
+            ]
+        },
+        "types": [
+            "jest",
+            "jquery",
+            "node"
+        ],
+        "typeRoots": [
+            "./node_modules/@types",
+            "./types/foundry",
+            "./types/libWrapper"
+        ]
+    },
+    "include": [
+        "./build/**/*",
+        "./src/**/*",
+        "./tests/**/*.ts",
+        "./types/foundry/global-external.d.mts",
+        "./vite.config.ts"
+    ],
+    "watchOptions": {
+        "fallbackPolling": "dynamicpriority",
+        "excludeDirectories": [
+            "dist",
+            "packs",
+            "static"
+        ]
+    }
+}
