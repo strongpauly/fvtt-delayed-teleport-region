@@ -17,9 +17,4 @@ A module for Foundry Virtual Table top that adds a Region Behaviour that telepor
 
 - Delay is configurable in seconds.
 - Will display scrolling text counting down until the teleport triggers. Can be disabled.
-
-### Getting Started
-
-<p>
-    <b>Delayed Teleport Region</b> is a FoundryVTT module template that uses Typescript and Vite for development.
-</p>
+- Count down will only decrement when game is not paused.

@@ -37,7 +37,7 @@ jobs:
           files: "dist/module.json"
         env:
           version: ${{steps.get_version.outputs.version-without-v}}
-          manifest: https://github.com/${{github.repository}}/releases/${{steps.get_version.outputs.version}}/download/module.json
+          manifest: https://github.com/${{github.repository}}/releases/download/${{steps.get_version.outputs.version}}/module.json
           download: https://github.com/${{github.repository}}/releases/download/${{steps.get_version.outputs.version}}/fvtt-delayed-teleport-region.zip
 
       - name: Zip files
