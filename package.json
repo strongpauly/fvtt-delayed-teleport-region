@@ -1,7 +1,7 @@
 {
-    "name": "dfreds-module-template-ts",
+    "name": "fvtt-delayed-teleport-region",
     "version": "1.0.0",
-    "description": "A FoundryVTT module template using Typescript",
+    "description": "A module for foundry virtual tabletop that adds a scene region type that teleports a token after a specified delayResources",
     "private": true,
     "type": "module",
     "scripts": {
@@ -22,7 +22,7 @@
         "lint:json": "eslint ./static --ext .json --no-eslintrc --plugin json --rule \"json/*: error\" --rule \"linebreak-style: error\"",
         "lint:fix": "eslint ./src --ext .ts --fix && prettier --write src/styles"
     },
-    "author": "DFreds (https://github.com/DFreds)",
+    "author": "strongpauly (https://github.com/strongpauly)",
     "license": "MIT",
     "engines": {
         "node": ">=20.15.0"
@@ -97,5 +97,6 @@
     },
     "dependencies": {
         "uuid": "^11.1.0"
-    }
+    },
+    "packageManager": "yarn@4.9.2"
 }

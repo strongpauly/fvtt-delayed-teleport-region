@@ -1,20 +1,25 @@
-import { ThisModule } from "../api.ts";
 import { MODULE_ID } from "../constants.ts";
-import { HandlebarHelpers } from "../handlebar-helpers.ts";
-import { Settings } from "../settings.ts";
+import { logger } from "../logger/logger.ts";
+import { DelayedTeleportTokenRegionBehaviourType } from "../region-behaviour.ts";
 import { Listener } from "./index.ts";
 
 const Init: Listener = {
     listen(): void {
         Hooks.once("init", () => {
-            new Settings().register();
-            new HandlebarHelpers().register();
+            // new Settings().register();
+            // new HandlebarHelpers().register();
 
-            (game.modules.get(MODULE_ID) as ThisModule).api = {
-                test(): void {
-                    console.log("Cool");
-                },
-            };
+            const key = `${MODULE_ID}.delayedTeleportToken`;
+
+            CONFIG.RegionBehavior.dataModels[key] =
+                DelayedTeleportTokenRegionBehaviourType;
+
+            CONFIG.RegionBehavior.typeIcons[key] = `fa-solid fa-timer`;
+
+            // (game.modules.get(MODULE_ID) as DelayedTeleportRegionModule).api =
+            //     new DelayedTeleportRegionModuleApi();
+
+            logger.info("Initialization complete");
         });
     },
 };

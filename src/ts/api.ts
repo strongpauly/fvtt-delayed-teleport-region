@@ -1,11 +1,7 @@
 import type Module from "@client/packages/module.d.mts";
 
-interface ThisModule extends Module {
-    api: ThisApi;
+export interface DelayedTeleportRegionModule extends Module {
+    api: DelayedTeleportRegionModuleApi;
 }
 
-interface ThisApi {
-    test(): void;
-}
-
-export { type ThisModule, type ThisApi };
+export class DelayedTeleportRegionModuleApi {}

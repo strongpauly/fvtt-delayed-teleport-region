@@ -1,13 +1,13 @@
-import * as Vite from "vite";
-import checker from "vite-plugin-checker";
 import esbuild from "esbuild";
 import fs from "fs";
-import packageJSON from "./package.json" with { type: "json" };
 import path from "path";
-import tsconfigPaths from "vite-tsconfig-paths";
+import * as Vite from "vite";
+import checker from "vite-plugin-checker";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import tsconfigPaths from "vite-tsconfig-paths";
+import packageJSON from "./package.json" with { type: "json" };
 
-const PACKAGE_ID = "modules/dfreds-module-template-ts";
+const PACKAGE_ID = `modules/${packageJSON.name}`;
 
 const config = Vite.defineConfig(({ command, mode }): Vite.UserConfig => {
     const buildMode =
@@ -53,11 +53,11 @@ const config = Vite.defineConfig(({ command, mode }): Vite.UserConfig => {
         fs.writeFileSync("./index.html", `<h1>${message}</h1>\n`);
         if (!fs.existsSync("./styles")) fs.mkdirSync("./styles");
         fs.writeFileSync(
-            "./styles/dfreds-module-template-ts.css",
+            "./styles/fvtt-delayed-teleport-region.css",
             `/** ${message} */\n`,
         );
         fs.writeFileSync(
-            "./dfreds-module-template-ts.mjs",
+            "./fvtt-delayed-teleport-region.mjs",
             `/** ${message} */\n\nwindow.global = window;\nimport "./src/ts/module.ts";\n`,
         );
         fs.writeFileSync("./vendor.mjs", `/** ${message} */\n`);
@@ -65,7 +65,9 @@ const config = Vite.defineConfig(({ command, mode }): Vite.UserConfig => {
 
     return {
         base:
-            command === "build" ? "./" : `/modules/dfreds-module-template-ts/`,
+            command === "build"
+                ? "./"
+                : `/modules/fvtt-delayed-teleport-region/`,
         publicDir: "static",
         define: {
             BUILD_MODE: JSON.stringify(buildMode),
@@ -77,7 +79,7 @@ const config = Vite.defineConfig(({ command, mode }): Vite.UserConfig => {
             minify: false,
             sourcemap: buildMode === "development",
             lib: {
-                name: "dfreds-module-template-ts",
+                name: "fvtt-delayed-teleport-region",
                 entry: "src/ts/module.ts",
                 formats: ["es"],
                 fileName: "module",
@@ -90,11 +92,11 @@ const config = Vite.defineConfig(({ command, mode }): Vite.UserConfig => {
                 ],
                 output: {
                     assetFileNames: ({ name }): string =>
-                        name === "style.css"
-                            ? "styles/dfreds-module-template-ts.css"
+                        name === "style.css" || name === "module.css"
+                            ? "styles/fvtt-delayed-teleport-region.css"
                             : (name ?? ""),
                     chunkFileNames: "[name].mjs",
-                    entryFileNames: "dfreds-module-template-ts.mjs",
+                    entryFileNames: "fvtt-delayed-teleport-region.mjs",
                     manualChunks: {
                         vendor: Object.keys(packageJSON.dependencies)
                             ? Object.keys(packageJSON.dependencies)
@@ -109,7 +111,7 @@ const config = Vite.defineConfig(({ command, mode }): Vite.UserConfig => {
             port: 30001,
             open: false,
             proxy: {
-                "^(?!/modules/dfreds-module-template-ts/)":
+                "^(?!/modules/fvtt-delayed-teleport-region/)":
                     "http://localhost:30000/",
                 "/socket.io": {
                     target: "ws://localhost:30000",
@@ -153,7 +155,7 @@ function deleteLockFilePlugin(): Vite.Plugin {
             const outDir = outputOptions.dir ?? "";
             const lockFile = path.resolve(
                 outDir,
-                "dfreds-module-template-ts.lock",
+                "fvtt-delayed-teleport-region.lock",
             );
             fs.rmSync(lockFile);
         },

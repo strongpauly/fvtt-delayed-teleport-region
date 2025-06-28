@@ -19,6 +19,6 @@ types/foundry/package-lock.json
 
 # Dummy files for vite dev server
 /index.html
-/styles/dfreds-module-template-ts.css
-/dfreds-module-template-ts.mjs
+/styles/fvtt-delayed-teleport-region.css
+/fvtt-delayed-teleport-region.mjs
 /vendor.mjs
