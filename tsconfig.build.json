@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.json",
+    "include": [
+        "./src/**/*",
+        "./tests/**/*.ts",
+        "./types/foundry/global-external.d.mts",
+        "./vite.config.ts"
+    ]
+}

@@ -5,7 +5,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "tsc && vite build",
+        "build": "tsc -p ./tsconfig.build.json && vite build",
         "stage": "tsc && npm run clean && vite build --mode stage",
         "dev": "tsc && npm run clean && vite build --mode development",
         "clean": "tsx ./build/clean.ts",

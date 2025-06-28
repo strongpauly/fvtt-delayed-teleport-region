@@ -17,9 +17,13 @@ const config = Vite.defineConfig(({ command, mode }): Vite.UserConfig => {
               ? "stage"
               : "development";
     const outDir = "dist";
+    const tsconfig = "./tsconfig.build.json";
+    const typescript = {
+        tsconfigPath: tsconfig,
+    };
     const plugins = [
-        checker({ typescript: true }),
-        tsconfigPaths({ loose: true }),
+        checker({ typescript: typescript }),
+        tsconfigPaths({ loose: true, projects: [tsconfig] }),
     ];
 
     console.log(`Build mode: ${buildMode}`);

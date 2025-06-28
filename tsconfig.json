@@ -3,12 +3,7 @@
         "target": "ES2022",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "lib": [
-            "ES2023",
-            "ESNext",
-            "DOM",
-            "DOM.Iterable"
-        ],
+        "lib": ["ES2023", "ESNext", "DOM", "DOM.Iterable"],
         "noEmit": true,
         "strict": true,
         "noFallthroughCasesInSwitch": true,
@@ -30,18 +25,10 @@
         "noErrorTruncation": true,
         "paths": {
             "@static/*": ["./static/*"],
-            "@common/*": [
-                "./types/foundry/common/*"
-            ],
-            "@client/*": [
-                "./types/foundry/client/*"
-            ]
+            "@common/*": ["./types/foundry/common/*"],
+            "@client/*": ["./types/foundry/client/*"]
         },
-        "types": [
-            "jest",
-            "jquery",
-            "node"
-        ],
+        "types": ["jest", "jquery", "node"],
         "typeRoots": [
             "./node_modules/@types",
             "./types/foundry",
@@ -57,10 +44,6 @@
     ],
     "watchOptions": {
         "fallbackPolling": "dynamicpriority",
-        "excludeDirectories": [
-            "dist",
-            "packs",
-            "static"
-        ]
+        "excludeDirectories": ["dist", "packs", "static"]
     }
 }
