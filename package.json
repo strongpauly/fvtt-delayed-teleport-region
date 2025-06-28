@@ -25,7 +25,7 @@
     "author": "strongpauly (https://github.com/strongpauly)",
     "license": "MIT",
     "engines": {
-        "node": ">=20.15.0"
+        "node": ">=20.19.3"
     },
     "devDependencies": {
         "@eslint/js": "^9.26.0",
