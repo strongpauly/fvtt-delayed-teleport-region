@@ -80,9 +80,7 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
             await Promise.all(p);
         };
 
-        if (
-            tokenDocument.getFlag(MODULE_ID, "teleportTimerInterval") === null
-        ) {
+        if (!tokenDocument.getFlag(MODULE_ID, "teleportTimerInterval")) {
             logger.debug(
                 `Creating timer on token ${token.id}.  Starting at ${countDown}`,
             );
