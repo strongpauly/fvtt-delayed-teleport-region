@@ -2,9 +2,9 @@
     "id": "fvtt-delayed-teleport-region",
     "title": "Delayed Teleport Region",
     "description": "A module for foundry virtual tabletop that adds a scene region type that teleports a token after a specified delay.",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "compatibility": {
-        "minimum": 12,
+        "minimum": 13,
         "verified": 13,
         "maximum": 13
     },
