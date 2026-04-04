@@ -13,4 +13,6 @@ export interface TeleportTokenRegionBehaviorType
 export type TeleportTokenRegionBehaviorTypeSchema = {
     /** The destination Region the Token is teleported to. */
     destination: fields.DocumentUUIDField;
+    /** v14: The destination Regions the Token could be teleported to. */
+    destinations: fields.DocumentUUIDField;
 };

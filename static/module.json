@@ -6,7 +6,7 @@
     "compatibility": {
         "minimum": 13,
         "verified": 13,
-        "maximum": 13
+        "maximum": 14
     },
     "esmodules": ["vendor.mjs", "fvtt-delayed-teleport-region.mjs"],
     "scripts": [],
