@@ -6,7 +6,7 @@
     <a href="https://github.com/strongpauly/fvtt-delayed-teleport-region/stargazers"><img src="https://img.shields.io/github/stars/strongpauly/fvtt-delayed-teleport-region?style=for-the-badge&logo=apachespark&color=eed49f&logoColor=D9E0EE&labelColor=302D41"/></a>
     <br/>
     <br/>
-    <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%strongpauly%2Ffvtt-delayed-teleport-region%2Freleases%2Flatest%2Fdownload%2Fmodule.json&query=%24.compatibility.verified&style=for-the-badge&logo=foundryvirtualtabletop&label=Foundry%20Version&color=%23fe6a1f"/>
+    <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fstrongpauly%2Ffvtt-delayed-teleport-region%2Freleases%2Flatest%2Fdownload%2Fmodule.json&query=%24.compatibility.verified&style=for-the-badge&logo=foundryvirtualtabletop&label=Foundry%20Version&color=%23fe6a1f"/>
     <br/>
     <br/>
 </p>
