@@ -18,3 +18,24 @@ A module for Foundry Virtual Table top that adds a Region Behaviour that telepor
 - Delay is configurable in seconds.
 - Will display scrolling text counting down until the teleport triggers. Can be disabled.
 - Count down will only decrement when game is not paused.
+
+### Local Development
+
+1. Copy `foundryconfig.example.json` to `foundryconfig.json` and fill in the paths for your local Foundry VTT installation and data folder.
+
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+3. Link the module into your Foundry VTT data folder:
+   ```sh
+   npm run link
+   ```
+
+4. Build and watch for changes:
+   ```sh
+   npm run watch
+   ```
+
+5. Start Foundry VTT (either manually or via `npm run foundry`) and enable the module in your world.

@@ -17,8 +17,7 @@ export type DelayedTeleportTokenRegionBehaviorTypeSchema =
     };
 
 export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
-    .regionBehaviors
-    .RegionBehaviorType<DelayedTeleportTokenRegionBehaviorTypeSchema> {
+    .regionBehaviors.TeleportTokenRegionBehaviorType {
     name = "Delayed Teleport Token";
     static override LOCALIZATION_PREFIXES = [
         ...foundry.data.regionBehaviors.TeleportTokenRegionBehaviorType
@@ -105,10 +104,18 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
                 DelayedTeleportTokenRegionBehaviourType.#clearInterval(
                     tokenDocument,
                 );
-                // Until https://github.com/foundryvtt/foundryvtt/issues/10828 is implemented in v13
                 await foundry.data.regionBehaviors.TeleportTokenRegionBehaviorType.events.tokenMoveIn.bind(
                     this as any,
-                )({ data: { token: tokenDocument }, user: game.user } as any);
+                )({
+                    data: {
+                        token: tokenDocument,
+                        movement: {
+                            id: tokenDocument.movement?.id,
+                            passed: { waypoints: [{ action: "" }] },
+                        },
+                    },
+                    user: game.user,
+                } as any);
             }, 1000);
             await Promise.all([
                 tokenDocument.setFlag(
