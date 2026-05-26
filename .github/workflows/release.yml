@@ -67,7 +67,7 @@ jobs:
           ref: ${{ github.event.release.tag_name }}
 
       - name: Foundry Website Update
-        uses: foundryvtt-dcc/foundry-package-release-action@main
+        uses: strongpauly/foundry-package-release-action@main
         with:
           actionToken: ${{ secrets.GITHUB_TOKEN }}
           manifestFileName: "module.json"
