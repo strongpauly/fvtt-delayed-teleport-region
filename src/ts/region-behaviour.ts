@@ -84,6 +84,13 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
                 `Creating timer on token ${token.id}.  Starting at ${countDown}`,
             );
             const interval = setInterval(async () => {
+                if (!tokenDocument.parent?.tokens.has(tokenDocument.id)) {
+                    logger.debug(
+                        `Token ${tokenDocument.id} no longer exists.  Cancelling timer`,
+                    );
+                    clearInterval(interval);
+                    return;
+                }
                 if (game.paused) {
                     logger.debug(
                         `Game is paused.  Skipping timer on token ${token.id}`,
