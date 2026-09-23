@@ -18,6 +18,7 @@ A module for Foundry Virtual Table top that adds a Region Behaviour that telepor
 - Delay is configurable in seconds.
 - Will display scrolling text counting down until the teleport triggers. Can be disabled.
 - Count down will only decrement when game is not paused.
+- Count down is cancelled if the token leaves the region or is deleted.
 
 ### Local Development
 
