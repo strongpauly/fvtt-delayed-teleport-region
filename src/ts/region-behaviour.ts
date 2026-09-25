@@ -59,11 +59,14 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
     }
 
     /**
-     * Resume any countdowns persisted on tokens in the viewed scene.
-     * Called on the canvasReady hook.
+     * Resume any countdowns persisted on tokens in every scene, so the driving
+     * user keeps counting down scenes they aren't viewing.
+     * Called on the ready hook.
      */
     static resumeCountdowns(): void {
-        for (const tokenDocument of canvas.scene?.tokens ?? []) {
+        for (const tokenDocument of game.scenes.contents.flatMap(
+            (s) => s.tokens.contents,
+        )) {
             const flag = tokenDocument.getFlag(MODULE_ID, TIMER_FLAG) as
                 | TeleportTimerFlag
                 | undefined;

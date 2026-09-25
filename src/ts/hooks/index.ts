@@ -1,5 +1,5 @@
-import { CanvasReady } from "./canvas-ready.ts";
 import { Init } from "./init.ts";
+import { Ready } from "./ready.ts";
 import { Setup } from "./setup.ts";
 
 interface Listener {
@@ -8,7 +8,7 @@ interface Listener {
 
 const HooksModule: Listener = {
     listen(): void {
-        const listeners: Listener[] = [Init, Setup, CanvasReady];
+        const listeners: Listener[] = [Init, Setup, Ready];
 
         for (const listener of listeners) {
             listener.listen();

@@ -21,6 +21,10 @@ A module for Foundry Virtual Table top that adds a Region Behaviour that telepor
 - Count down is cancelled if the token leaves the region or is deleted.
 - Count down state is stored on the token, so it survives a page refresh or scene change.
 
+### Limitations
+
+- A token can only have one count down at a time. If it is inside two overlapping Delayed Teleport regions (or one region with two Delayed Teleport behaviours), only the first one entered counts down, and leaving the other one cancels that count down.
+
 ### Local Development
 
 1. Copy `foundryconfig.example.json` to `foundryconfig.json` and fill in the paths for your local Foundry VTT installation and data folder.

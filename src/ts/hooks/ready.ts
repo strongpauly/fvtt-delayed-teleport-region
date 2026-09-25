@@ -1,9 +1,9 @@
 import { DelayedTeleportTokenRegionBehaviourType } from "../region-behaviour.ts";
 import { Listener } from "./index.ts";
 
-export const CanvasReady: Listener = {
+export const Ready: Listener = {
     listen(): void {
-        Hooks.on("canvasReady", () => {
+        Hooks.once("ready", () => {
             DelayedTeleportTokenRegionBehaviourType.resumeCountdowns();
         });
     },
