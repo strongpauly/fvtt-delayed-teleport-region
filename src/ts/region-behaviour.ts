@@ -59,11 +59,14 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
     }
 
     /**
-     * Resume any countdowns persisted on tokens in the viewed scene.
-     * Called on the canvasReady hook.
+     * Resume any countdowns persisted on tokens in every scene, so the driving
+     * user keeps counting down scenes they aren't viewing.
+     * Called on the ready hook.
      */
     static resumeCountdowns(): void {
-        for (const tokenDocument of canvas.scene?.tokens ?? []) {
+        for (const tokenDocument of game.scenes.contents.flatMap(
+            (s) => s.tokens.contents,
+        )) {
             const flag = tokenDocument.getFlag(MODULE_ID, TIMER_FLAG) as
                 | TeleportTimerFlag
                 | undefined;
@@ -97,6 +100,8 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
     ) {
         const tokenDocument = event.data.token;
         if (intervals.has(tokenDocument.uuid)) return;
+        // The active GM drives the countdown so a laggy player can't stall it.
+        const driver = game.users.activeGM ?? event.user;
         if (event.user.isSelf) {
             logger.debug(
                 `Creating timer on token ${tokenDocument.id}.  Starting at ${this.delayAmount}`,
@@ -104,21 +109,22 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
             const flag: TeleportTimerFlag = {
                 countDown: this.delayAmount,
                 behavior: this.behavior!.uuid!,
-                user: event.user.id,
+                user: driver.id,
             };
             await tokenDocument.setFlag(MODULE_ID, TIMER_FLAG, flag);
         }
         DelayedTeleportTokenRegionBehaviourType.#startCountdown.call(
             this,
             tokenDocument,
-            event.user,
+            driver,
         );
     }
 
     /**
      * Run the countdown on this client. Every client displays the countdown,
-     * but only the driving user's client (or the active GM if that user has
-     * disconnected) decrements the persisted count.
+     * but only the driving user's client (the active GM, or the moving user if
+     * no GM was connected) decrements the persisted count. If the driving user
+     * disconnects, the active GM takes over.
      */
     static #startCountdown(
         this: DelayedTeleportTokenRegionBehaviourType,
