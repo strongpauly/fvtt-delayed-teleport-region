@@ -24,6 +24,8 @@ interface TeleportTimerFlag {
     behavior: string;
     /** ID of the User whose client drives the countdown. */
     user: string;
+    /** ID of the User that moved the token into the region. */
+    mover?: string;
 }
 
 const TIMER_FLAG = "teleportTimer";
@@ -110,6 +112,7 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
                 countDown: this.delayAmount,
                 behavior: this.behavior!.uuid!,
                 user: driver.id,
+                mover: event.user.id,
             };
             await tokenDocument.setFlag(MODULE_ID, TIMER_FLAG, flag);
         }
@@ -203,18 +206,47 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
             // The flag is left at 0 so every client observes completion and
             // invokes the base handler, which decides who teleports. The
             // TOKEN_MOVE_OUT triggered by the teleport removes the flag.
-            await foundry.data.regionBehaviors.TeleportTokenRegionBehaviorType.events.tokenMoveIn.bind(
-                this as any,
-            )({
-                data: {
-                    token: tokenDocument,
-                    movement: {
-                        id: tokenDocument.movement?.id,
-                        passed: { waypoints: [{ action: "" }] },
+            // As in core, the user that moved the token in is the one the base
+            // handler acts for: they confirm the destination, and teleport if
+            // permitted (otherwise a designated user does it for them). Fall
+            // back to the driving user, then the active GM, if they've left.
+            const teleportUser =
+                [
+                    game.users.get(flag.mover ?? ""),
+                    user,
+                    game.users.activeGM,
+                ].find((u) => u?.active) ?? game.user;
+            // The base handler stops (or pauses) the token's movement, which
+            // only that movement's user may do. If someone else has moved the
+            // token since, there's nothing of the teleport user's to stop.
+            const movementUser = tokenDocument.movement?.user;
+            const stubMovementControls =
+                teleportUser.isSelf && movementUser && !movementUser.isSelf;
+            if (stubMovementControls) {
+                Object.assign(tokenDocument, {
+                    stopMovement: () => false,
+                    pauseMovement: () => null,
+                });
+            }
+            try {
+                await foundry.data.regionBehaviors.TeleportTokenRegionBehaviorType.events.tokenMoveIn.bind(
+                    this as any,
+                )({
+                    data: {
+                        token: tokenDocument,
+                        movement: {
+                            id: tokenDocument.movement?.id,
+                            passed: { waypoints: [{ action: "" }] },
+                        },
                     },
-                },
-                user: user ?? game.user,
-            } as any);
+                    user: teleportUser,
+                } as any);
+            } finally {
+                if (stubMovementControls) {
+                    delete (tokenDocument as any).stopMovement;
+                    delete (tokenDocument as any).pauseMovement;
+                }
+            }
         };
 
         intervals.set(tokenDocument.uuid, setInterval(tick, 1000));
