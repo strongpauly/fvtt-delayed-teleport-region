@@ -1,7 +1,10 @@
 import type * as fields from "@common/data/fields.mjs";
 import type { EventBehaviorStaticHandler } from "../../types/foundry/client/data/region-behaviors/base.d.mts";
 import type { TeleportTokenRegionBehaviorTypeSchema } from "../../types/foundry/client/data/region-behaviors/teleport-token.d.mts";
-import type { TokenBasicMoveRegionEvent } from "../../types/foundry/client/documents/region.d.mts";
+import type {
+    RegionEvent,
+    TokenBasicMoveRegionEvent,
+} from "../../types/foundry/client/documents/region.d.mts";
 import { MODULE_ID } from "./constants.ts";
 import { logger } from "./logger/logger.ts";
 
@@ -76,7 +79,7 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
             const behavior = fromUuidSync(flag.behavior);
             if (
                 !(behavior instanceof RegionBehavior) ||
-                behavior.disabled ||
+                !behavior.active ||
                 !(
                     behavior.system instanceof
                     DelayedTeleportTokenRegionBehaviourType
@@ -100,11 +103,69 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
         this: DelayedTeleportTokenRegionBehaviourType,
         event: TokenBasicMoveRegionEvent,
     ) {
-        const tokenDocument = event.data.token;
+        await DelayedTeleportTokenRegionBehaviourType.#beginCountdown.call(
+            this,
+            event.data.token,
+            event.user,
+            event.user,
+        );
+    }
+
+    /** Start a countdown for every token already in the region once enabled. */
+    static async #onBehaviorActivated(
+        this: DelayedTeleportTokenRegionBehaviourType,
+        event: RegionEvent,
+    ) {
+        await Promise.all(
+            [...(this.region?.tokens ?? [])].map((tokenDocument) =>
+                DelayedTeleportTokenRegionBehaviourType.#beginCountdown.call(
+                    this,
+                    tokenDocument,
+                    event.user,
+                    // Teleport for whoever last moved the token.
+                    game.users.get(tokenDocument.movement?.user.id ?? "") ??
+                        event.user,
+                ),
+            ),
+        );
+    }
+
+    /** Cancel this behaviour's countdowns once disabled. */
+    static async #onBehaviorDeactivated(
+        this: DelayedTeleportTokenRegionBehaviourType,
+        event: RegionEvent,
+    ) {
+        await Promise.all(
+            [...(this.region?.tokens ?? [])].map(async (tokenDocument) => {
+                const flag = tokenDocument.getFlag(MODULE_ID, TIMER_FLAG) as
+                    | TeleportTimerFlag
+                    | undefined;
+                if (flag?.behavior !== this.behavior?.uuid) return;
+                DelayedTeleportTokenRegionBehaviourType.#clearInterval(
+                    tokenDocument,
+                );
+                if (event.user.isSelf) {
+                    await tokenDocument.unsetFlag(MODULE_ID, TIMER_FLAG);
+                }
+            }),
+        );
+    }
+
+    /**
+     * Start a fresh countdown for a token.
+     * @param user The user whose client persists the new countdown.
+     * @param mover The user the teleport is performed for.
+     */
+    static async #beginCountdown(
+        this: DelayedTeleportTokenRegionBehaviourType,
+        tokenDocument: TokenDocument,
+        user: User,
+        mover: User,
+    ) {
         if (intervals.has(tokenDocument.uuid)) return;
         // The active GM drives the countdown so a laggy player can't stall it.
-        const driver = game.users.activeGM ?? event.user;
-        if (event.user.isSelf) {
+        const driver = game.users.activeGM ?? user;
+        if (user.isSelf) {
             logger.debug(
                 `Creating timer on token ${tokenDocument.id}.  Starting at ${this.delayAmount}`,
             );
@@ -112,7 +173,7 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
                 countDown: this.delayAmount,
                 behavior: this.behavior!.uuid!,
                 user: driver.id,
-                mover: event.user.id,
+                mover: mover.id,
             };
             await tokenDocument.setFlag(MODULE_ID, TIMER_FLAG, flag);
         }
@@ -139,11 +200,12 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
 
         const tick = async () => {
             if (
+                !this.behavior?.active ||
                 !tokenDocument.parent?.tokens.has(tokenDocument.id) ||
                 !tokenDocument.regions.has(this.region as RegionDocument<Scene>)
             ) {
                 logger.debug(
-                    `Token ${tokenDocument.id} deleted or left region.  Cancelling timer`,
+                    `Behavior inactive, or token ${tokenDocument.id} deleted or left region.  Cancelling timer`,
                 );
                 DelayedTeleportTokenRegionBehaviourType.#clearInterval(
                     tokenDocument,
@@ -273,5 +335,7 @@ export class DelayedTeleportTokenRegionBehaviourType extends foundry.data
     static override events: Record<string, EventBehaviorStaticHandler> = {
         [CONST.REGION_EVENTS.TOKEN_MOVE_IN]: this.#onTokenMoveIn,
         [CONST.REGION_EVENTS.TOKEN_MOVE_OUT]: this.#onTokenMoveOut,
+        [CONST.REGION_EVENTS.BEHAVIOR_ACTIVATED]: this.#onBehaviorActivated,
+        [CONST.REGION_EVENTS.BEHAVIOR_DEACTIVATED]: this.#onBehaviorDeactivated,
     } as any;
 }
